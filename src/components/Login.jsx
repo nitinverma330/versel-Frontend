@@ -10,7 +10,8 @@ const Login = ({ onLogin }) => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
 
-  const API_BASE_URL = 'http://localhost:5000/api';
+  const API_BASE_URL = 'https://versel-backend-p1o8f2hwq-nitins-projects-f3539e84.vercel.app/api';
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
