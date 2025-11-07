@@ -14,8 +14,7 @@ const QRScanner = ({ user }) => {
   const [showStatsForm, setShowStatsForm] = useState(false);
   const [statsRoll, setStatsRoll] = useState('');
 
-  const API_BASE_URL = 'http://localhost:5000/api';
-
+const API_BASE_URL = 'https://versel-backend-henna.vercel.app/api';
   // Get authentication headers
   const getAuthHeaders = () => {
     const token = localStorage.getItem('token');
