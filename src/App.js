@@ -9,8 +9,8 @@ function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const API_BASE_URL = 'http://localhost:5000/api';
-
+const API_BASE_URL = 'https://versel-backend-henna.vercel.app/api';
+  
   // Check if user is logged in on app start
   useEffect(() => {
     const token = localStorage.getItem('token');
