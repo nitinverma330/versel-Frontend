@@ -20,7 +20,7 @@ const QRGenerator = ({ user }) => {
   const [loading, setLoading] = useState(false);
   const [viewMode, setViewMode] = useState('present');
 
-  const API_BASE_URL = 'http://localhost:5000/api';
+  const API_BASE_URL = 'https://versel-backend-henna.vercel.app/api';
 
   const courses = ['BCA', 'MCA', 'B.Tech', 'M.Tech', 'B.Sc', 'M.Sc'];
   const sections = ['A', 'B', 'C', 'D'];
