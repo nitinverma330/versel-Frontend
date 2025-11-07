@@ -14,7 +14,9 @@ const QRScanner = ({ user }) => {
   const [showStatsForm, setShowStatsForm] = useState(false);
   const [statsRoll, setStatsRoll] = useState('');
 
-const API_BASE_URL = 'https://versel-backend-henna.vercel.app/api';
+  // ✅ FIX 1: Updated API URL to deployed backend
+  const API_BASE_URL = 'https://versel-backend-henna.vercel.app/api';
+
   // Get authentication headers
   const getAuthHeaders = () => {
     const token = localStorage.getItem('token');
@@ -186,6 +188,7 @@ const API_BASE_URL = 'https://versel-backend-henna.vercel.app/api';
     }
   };
 
+  // ✅ FIX 2: Updated startScanner function to use rear camera
   const startScanner = () => {
     if (!window.Html5Qrcode) {
       showMessage('QR scanner library not loaded yet. Please wait...', false);
@@ -215,27 +218,53 @@ const API_BASE_URL = 'https://versel-backend-henna.vercel.app/api';
     };
 
     const onScanFailure = (error) => {
-      console.log('❌ QR Scan failed:', error);
+      // Don't show error for every failed scan attempt (it's normal)
+      if (!error.includes('NotFoundException')) {
+        console.log('❌ QR Scan failed:', error);
+      }
     };
 
-    window.Html5Qrcode.getCameras().then(devices => {
-      const cameraId = (devices && devices.length) ? devices[0].id : null;
+    // ✅ IMPROVED CAMERA SELECTION: Always try rear camera first
+    const startWithRearCamera = () => {
       html5QrCode.start(
-        cameraId ? { deviceId: { exact: cameraId } } : { facingMode: "environment" },
-        { fps: 10, qrbox: 250 },
+        { facingMode: "environment" }, // This forces rear camera
+        { 
+          fps: 10, 
+          qrbox: { width: 250, height: 250 }
+        },
         onScanSuccess,
         onScanFailure
       ).then(() => {
         setIsCameraOn(true);
-        showMessage("📷 Camera started successfully! Point at QR code.");
+        showMessage("📷 Rear camera started! Point at QR code.");
       }).catch(err => {
-        console.error('❌ Camera start error:', err);
-        showMessage('❌ Could not start camera: ' + err, false);
+        console.error('❌ Rear camera start error:', err);
+        
+        // Fallback: try user camera (front) if rear fails
+        startWithFrontCamera();
       });
-    }).catch(err => {
-      console.error('❌ Camera detection error:', err);
-      showMessage('❌ No camera found. Please check your device permissions.', false);
-    });
+    };
+
+    const startWithFrontCamera = () => {
+      html5QrCode.start(
+        { facingMode: "user" }, // Front camera as fallback
+        { 
+          fps: 10, 
+          qrbox: { width: 250, height: 250 }
+        },
+        onScanSuccess,
+        onScanFailure
+      ).then(() => {
+        setIsCameraOn(true);
+        showMessage("📷 Camera started! Point at QR code.");
+      }).catch(err => {
+        console.error('❌ Front camera start error:', err);
+        showMessage('❌ Could not start any camera. Please check permissions.', false);
+      });
+    };
+
+    // Start with rear camera by default
+    startWithRearCamera();
   };
 
   const closeForm = () => {
